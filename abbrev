@@ -1,0 +1,26 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ;; Arrows
+    ("ra" "→ " nil :count 1)
+    ("la" "←" nil :count 1)
+    ("ua" "↑" nil :count 1)
+    ("da" "↓" nil :count 1)
+
+    ;; typos
+    ("iwth" "with" nil :count 1)
+    ("becuase" "because" nil :count 1)
+
+    ;; common words
+    ("bec" "because" nil :count 1)
+    ("thru" "through" nil :count 1)
+    ("thoro" "thorough" nil :count 1)
+    ("expen" "expensive" nil :count 1)
+    
+    ;; hard spellings
+    ("unf" "unfortunately" nil :count 1)
+    ("nes" "necessary" nil :count 1)
+    ("nec" "necessary" nil :count 1)
+    ("accom" "accommodation" nil :count 1)
+   ))
+

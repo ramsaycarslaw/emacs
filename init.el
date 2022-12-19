@@ -13,6 +13,10 @@
 
 (setq package-enable-at-startup nil)
 
+(straight-use-package 'gcmh)
+(require 'gcmh)
+(gcmh-mode 1)
+
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
@@ -24,10 +28,11 @@
   (server-start)
   :config
   (tool-bar-mode -1)
+		(setq-default tab-width 1)
+		(setq-default indent-tabs-mode nil)
   (scroll-bar-mode -1)
   (hl-line-mode 1)
   (set-frame-font "Roboto Mono 12" nil t)
-  (global-display-line-numbers-mode)
   (setq frame-title-format "")
   (setq ns-use-proxy-icon nil))
 
@@ -45,6 +50,8 @@
   (evil-define-key 'normal 'global (kbd "<leader>f") 'counsel-find-file)
   (evil-define-key 'normal 'global (kbd "<leader>b") 'counsel-switch-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>p") 'projectile-command-map)
+  (evil-define-key 'normal 'global (kbd "<leader>r") 'eval-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
   )
 
 (use-package evil-collection
@@ -65,7 +72,12 @@
   (evil-set-undo-system 'undo-tree)
   (global-undo-tree-mode 1))
 
-(global-set-key (kbd "M-3") (lambda () (interactive) (insert "#")))
+(global-visual-line-mode)
+(global-set-key (kbd "M-3") (lambda () (interactive) (insert "£")))
+
+(setq-default abbrev-mode t)
+(read-abbrev-file "~/.emacs.d/abbrev")
+(setq save-abbrevs t)
 
 ;;(use-package ivy-posframe
 ;;  :straight t
@@ -75,6 +87,10 @@
 ;;  :config(ivy-posframe-mode))
 
 ;; files
+
+(use-package ivy
+  :config
+  (ivy-mode 1))
 
 (use-package counsel
   :straight t
@@ -113,10 +129,16 @@
   :bind
   ("C-`" . vterm))
 
+;; pdf
+
+(use-package pdf-tools
+  :config
+  (setq pdf-view-use-scaling t)
+  (pdf-tools-install))
+
 ;; Programming
 
-
-                                        ; git intergration
+                                        ; git 
 (use-package magit
   :straight t
   :bind ("C-x g" . magit-status)
@@ -196,6 +218,12 @@
 
 (use-package lsp-metals
   :hook (scala-mode . lsp))
+					; rust
+
+(use-package rustic
+  :config
+  (setq rustic-format-on-save))
+
                                         ; go
 (defun lsp-go-install-save-hooks ()
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
@@ -274,12 +302,26 @@
 ;; Visual stuff
 (use-package doom-themes)
 
+(use-package hide-mode-line
+  :config
+  (global-hide-mode-line-mode 1)
+  (evil-define-key 'normal 'global (kbd "<leader>m") 'hide-mode-line-mode))
+
 (load-theme 'doom-github-dark t)
 (global-hl-line-mode)
+(add-hook 'prog-mode-hook 'my-line-numbers)
+(defun my-line-numbers ()
+  "Display the line numbers"
+  (display-line-numbers-mode 1))
 
 (use-package doom-modeline
   :ensure t
+  :init (display-battery-mode)
   :hook (after-init . doom-modeline-mode))
+
+ (use-package org-pretty-table
+    :straight(:type git :host github :repo "Fuco1/org-pretty-table")
+    :hook org-mode)
 
 ;;(straight-use-package
 ;; '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
@@ -291,8 +333,11 @@
 
 (when (eq system-type 'darwin) (ns-auto-titlebar-mode))
 
+(use-package rainbow-mode)
+
 (use-package good-scroll ; scrolling
   :config
+  (setq scroll-conservatively 101)
   (good-scroll-mode 1)
   (setq scroll-margin 7)
   (setq scroll-step 1))
@@ -305,11 +350,12 @@
  '(company-box-color-icon nil)
  '(company-box-enable-icon t)
  '(custom-safe-themes
-   '("be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" default))
+   '("a3d67ac47d307084591e22cfe6270faefe58b3985fc757847b4d45ac3e0f97cf" "d4745dbfd5d0077b5b6c695d9f7e6217558477d72da87a5f8d3d7dadfd851b37" "7a424478cb77a96af2c0f50cfb4e2a88647b3ccca225f8c650ed45b7f50d9525" "b2d911bc42d21a8f8a335d3a84dbcaa80d5f4add92c9ce265cdf7aa1d354b4a8" "be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" default))
  '(warning-suppress-log-types '((use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(line-number ((t (:inherit default :foreground "#37474F" :slant normal :weight normal))))
+ '(line-number-current-line ((t (:inherit (hl-line default) :foreground "#d4d4d4" :slant normal :weight normal)))))
